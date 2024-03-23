@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     DOMAIN: str = "localhost"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
     
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+    
     @computed_field # type: ignore
     @property
     def server_host(self) -> str:
@@ -57,32 +59,25 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
         
-    SMTP_TLS: bool = True
-    SMTP_SSL: bool = False
-    SMTP_PORT: int = 587
-    SMTP_HOST: str | None = None
-    SMTP_USER: str | None = None
-    SMTP_PASSWORD: str | None = None
-    # TODO: update type to EmailStr when sqlmodel supports it
-    EMAILS_FROM_EMAIL: str | None = None
-    EMAILS_FROM_NAME: str | None = None
+    TEST_POSTGRES_SERVER: str = "ep-spring-limit-a1yjjua4.ap-southeast-1.aws.neon.tech"
+    TEST_POSTGRES_PORT: int = 5432
+    TEST_POSTGRES_USER: str = "luffy"
+    TEST_POSTGRES_PASSWORD: str = "LP4dBClR5AmW"
+    TEST_POSTGRES_DB: str = "test"
     
-    @model_validator(mode="after")
-    def _set_default_emails_from(self) -> Self:
-        if not self.EMAILS_FROM_NAME:
-            self.EMAILS_FROM_NAME = self.PROJECT_NAME
-        return self
-    
-    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
-    
-    @computed_field  # type: ignore[misc]
+    @computed_field # type: ignore
     @property
-    def emails_enabled(self) -> bool:
-        return bool(self.SMTP_HOST and self.EMAILS_FROM_EMAIL)
+    def TEST_SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
+        return MultiHostUrl.build(
+            scheme="postgresql+psycopg",
+            username=self.TEST_POSTGRES_USER,
+            password=self.TEST_POSTGRES_PASSWORD,
+            host=self.TEST_POSTGRES_SERVER,
+            port=self.TEST_POSTGRES_PORT,
+            path=self.TEST_POSTGRES_DB,
+        )
 
-    # TODO: update type to EmailStr when sqlmodel supports it
     EMAIL_TEST_USER: str = "test@example.com"
-    # TODO: update type to EmailStr when sqlmodel supports it
     FIRST_SUPERUSER: str = "MAS"
     FIRST_SUPERUSER_PASSWORD: str = "abc@123"
     USERS_OPEN_REGISTRATION: bool = True

@@ -2,22 +2,23 @@ from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel, Session, create_engine
 
 from app.api.main import api_router
 from app.core.config import settings
-from app.core.db import engine
+from app.core.db import engine, init_db
+
 
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
 
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Creating tables..")
-    create_db_and_tables()
+    with Session(engine) as session:
+        init_db(session)
     yield
 
 app = FastAPI(

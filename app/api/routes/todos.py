@@ -32,9 +32,9 @@ def read_todos(session: SessionDep, current_user: CurrentUser, skip: int = 0, li
             .offset(skip)
             .limit(limit)
         )
-        items = session.exec(statement).all()
+        todos = session.exec(statement).all()
         
-    return TodosOut(todos=todos, count=count)
+    return TodosOut(data=todos, count=count)
 
 @router.get("/{id}", response_model=TodoOut)
 def read_todo(session: SessionDep, current_user:CurrentUser, id: int) -> Any:
@@ -53,7 +53,7 @@ def create_todo(*, session: SessionDep, current_user: CurrentUser, todo_in: Todo
     """
     Create new todo.
     """
-    todo = Todo.model_validate(todo_in, update={"owner_id": current_user.id})
+    todo = Todo.model_validate(todo_in, update={"owner_id": current_user.id}, )
     session.add(todo)
     session.commit()
     session.refresh(todo)
