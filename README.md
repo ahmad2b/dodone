@@ -25,7 +25,7 @@ poetry install
 To run the application, use the following command:
 
 ```sh
-uvicorn app.main:app --reload
+poetry run uvicorn app.main:app --reload
 ```
 
 ## Project Structure
@@ -64,7 +64,7 @@ tests/
 To run the tests, use the following command:
 
 ```sh
-pytest
+poetry run pytest
 ```
 
 ## License

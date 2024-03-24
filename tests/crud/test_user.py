@@ -13,22 +13,6 @@ from app.core.db import engine
 from collections.abc import Generator
 
 
-def db()-> Generator[Session, None, None]:
-    with Session(engine) as session:
-        print("Starting test database initialization...")
-        init_test_db(session)
-        print("Test database initialized.")
-
-        yield session
-        print("Cleaning up after tests...")
-
-        statement = delete(Todo)
-        session.execute(statement)
-        statement = delete(User)
-        session.execute(statement)
-        session.commit()
-        print("Cleanup completed.")
-
 def test_create_user(db: Session) -> None:
     email = random_email()
     password = random_lower_string()

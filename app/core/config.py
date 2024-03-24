@@ -77,8 +77,9 @@ class Settings(BaseSettings):
             path=self.TEST_POSTGRES_DB,
         )
 
-    EMAIL_TEST_USER: str = "test@example.com"
-    FIRST_SUPERUSER: str = "MAS"
+    EMAIL_TEST_USER: str = "test@mas.com"
+    # FIRST_SUPERUSER: str = "MAS"
+    FIRST_SUPERUSER: str = "mas@mas.com"
     FIRST_SUPERUSER_PASSWORD: str = "abc@123"
     USERS_OPEN_REGISTRATION: bool = True
 

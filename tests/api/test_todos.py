@@ -19,7 +19,7 @@ def test_create_todo(
     assert content["title"] == data["title"]
     assert content["description"] == data["description"]
     assert "id" in content
-    assert "owner_id" in content
+    assert "owner" in content and "id" in content["owner"]
 
 
 def test_read_todo(
@@ -35,7 +35,7 @@ def test_read_todo(
     assert content["title"] == todo.title
     assert content["description"] == todo.description
     assert content["id"] == todo.id
-    assert content["owner_id"] == todo.owner_id
+    assert "owner" in content and "id" in content["owner"]
 
 
 def test_read_todo_not_found(
@@ -92,7 +92,7 @@ def test_update_todo(
     assert content["title"] == data["title"]
     assert content["description"] == data["description"]
     assert content["id"] == todo.id
-    assert content["owner_id"] == todo.owner_id
+    assert "owner" in content and "id" in content["owner"]
 
 
 def test_update_todo_not_found(

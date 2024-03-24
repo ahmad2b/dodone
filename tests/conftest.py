@@ -9,27 +9,28 @@ from app.core.db import init_test_db, test_engine as engine
 from app.main import app
 from app.models import Todo, User
 from tests.utils import authentication_token_from_email, get_superuser_token_headers
+from app.api.deps import get_db as get_session
 
 @pytest.fixture(scope="session", autouse=True)
 def db()-> Generator[Session, None, None]:
     with Session(engine) as session:
-        print("Starting test database initialization...")
         init_test_db(session)
-        print("Test database initialized.")
-
         yield session
-        print("Cleaning up after tests...")
-
         statement = delete(Todo)
         session.execute(statement)
         statement = delete(User)
         session.execute(statement)
         session.commit()
         print("Cleanup completed.")
-        
-        
+
+
 @pytest.fixture(scope="module")
-def client()-> Generator[TestClient, None, None]:
+def client(db: Session) -> Generator[TestClient, None, None]:
+    def override_get_session():
+        return db
+
+    app.dependency_overrides[get_session] = override_get_session
+
     with TestClient(app) as c:
         yield c
         
